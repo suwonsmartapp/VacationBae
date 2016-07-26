@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTextView = (TextView) findViewById(R.id.text_view);
 
         findViewById(R.id.button).setOnClickListener(this);
+        findViewById(R.id.memo_button).setOnClickListener(this);
 
         Log.d(TAG, "onCreate: ");
     }
@@ -74,8 +75,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(this, SecondActivity.class);
-        startActivity(intent);
+        switch (view.getId()) {
+            case R.id.button:
+                Intent intent = new Intent(this, SecondActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.memo_button:
+                startActivity(new Intent(this, MemoMainActivity.class));
+                break;
+        }
     }
 
 }

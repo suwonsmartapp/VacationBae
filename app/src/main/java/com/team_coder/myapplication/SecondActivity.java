@@ -57,7 +57,7 @@ public class SecondActivity extends AppCompatActivity {
         });
     }
 
-    static class StudentAdapter extends BaseAdapter {
+    public static class StudentAdapter extends BaseAdapter {
         private static final String TAG = StudentAdapter.class.getSimpleName();
 
         private List<Student> mData;
