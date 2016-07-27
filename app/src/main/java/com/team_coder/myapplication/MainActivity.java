@@ -1,10 +1,13 @@
 package com.team_coder.myapplication;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -23,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.button).setOnClickListener(this);
         findViewById(R.id.memo_button).setOnClickListener(this);
+        findViewById(R.id.call).setOnClickListener(this);
+        findViewById(R.id.thread).setOnClickListener(this);
 
         Log.d(TAG, "onCreate: ");
     }
@@ -83,7 +88,80 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.memo_button:
                 startActivity(new Intent(this, MemoMainActivity.class));
                 break;
+            case R.id.call:
+                String phoneNumber = ((Button)view).getText().toString();
+                dialPhoneNumber(phoneNumber);
+                break;
+            case R.id.thread:
+                new LongWorkTask().execute();
+                // 오래 걸리는 일
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        // 백그라운드 쓰레드
+//                        try {
+//                            Log.d(TAG, "onClick: 오래 걸리는 일 시작");
+//                            Thread.sleep(3000);
+//                            Log.d(TAG, "onClick: 오래 걸리는 일 끝");
+//                            mTextView.post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    mTextView.setText("끝났다");
+//                                }
+//                            });
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
+
+                break;
         }
+    }
+
+    public void dialPhoneNumber(String phoneNumber) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + phoneNumber));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    private class LongWorkTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Log.d(TAG, "onClick: 오래 걸리는 일 시작");
+            try {
+                Thread.sleep(3000);
+                //publishProgress();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "onClick: 오래 걸리는 일 끝");
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            mTextView.setText("끝났다");
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
     }
 
 }
