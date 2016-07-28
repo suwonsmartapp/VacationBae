@@ -1,6 +1,7 @@
 package com.team_coder.myapplication;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.team_coder.myapplication.database.StudentContract;
+import com.team_coder.myapplication.database.StudentDbHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +26,15 @@ public class MemoMainActivity extends AppCompatActivity {
 
     private List<Student> mData;
     private SecondActivity.StudentAdapter mAdapter;
+    private StudentDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_main);
+
+        mDbHelper = new StudentDbHelper(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -38,10 +47,20 @@ public class MemoMainActivity extends AppCompatActivity {
             }
         });
 
+        Cursor cursor = mDbHelper.getStudents();
+
         // Data
         mData = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            mData.add(new Student("아무개" + i, i + 1));
+        cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(
+                    cursor.getColumnIndexOrThrow(StudentContract.StudentEntry.COLUMN_NAME_NAME)
+            );
+            long itemId = cursor.getLong(
+                    cursor.getColumnIndexOrThrow(StudentContract.StudentEntry._ID)
+            );
+
+            mData.add(new Student(name, (int) itemId));
         }
 
         // Adapter
@@ -96,8 +115,19 @@ public class MemoMainActivity extends AppCompatActivity {
                 String addData = data.getStringExtra("name");
                 int position = data.getIntExtra("position", -1);
                 if (position == -1) {
+
+                    // DB 작업
+                    long newRowId = mDbHelper.insertStudent(addData);
+
                     // 추가
-                    mData.add(new Student(addData, 0));
+                    mData.add(new Student(addData, (int) newRowId));
+
+                    if (newRowId == -1) {
+                        Toast.makeText(MemoMainActivity.this, "에러", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MemoMainActivity.this, "성공", Toast.LENGTH_SHORT).show();
+                    }
+
                 } else {
                     // 수정
                     Student modify = mData.get(position);
