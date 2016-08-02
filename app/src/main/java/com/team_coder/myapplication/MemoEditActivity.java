@@ -40,7 +40,7 @@ public class MemoEditActivity extends AppCompatActivity {
                 // 저장
                 Intent intent = new Intent();
                 intent.putExtra("name", mNameEditText.getText().toString());
-                intent.putExtra("position", getIntent().getIntExtra("position", -1));
+                intent.putExtra("id", getIntent().getLongExtra("id", -1));
                 setResult(RESULT_OK, intent);
                 finish();
                 return true;

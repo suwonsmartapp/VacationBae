@@ -65,6 +65,7 @@ public class StudentDbHelper extends SQLiteOpenHelper {
         String sortOrder =
                 StudentContract.StudentEntry._ID + " DESC"; // ASC or DESC
 
+        // SELECT _id, name FROM student;
         Cursor cursor = db.query(
                 StudentContract.StudentEntry.TABLE_NAME,  // The table to query
                 projection,                               // The columns to return
@@ -76,5 +77,23 @@ public class StudentDbHelper extends SQLiteOpenHelper {
         );
 
         return cursor;
+    }
+
+    public int deleteStudent(long id) {
+        return getWritableDatabase()
+                .delete(StudentContract.StudentEntry.TABLE_NAME,
+                        StudentContract.StudentEntry._ID + "=" + id,
+                        null);
+    }
+
+    public int updateStudent(long id, String name) {
+        ContentValues values = new ContentValues();
+        values.put(StudentContract.StudentEntry.COLUMN_NAME_NAME, name);
+
+        return getWritableDatabase()
+                .update(StudentContract.StudentEntry.TABLE_NAME,
+                        values,
+                        StudentContract.StudentEntry._ID + "=" + id,
+                        null);
     }
 }

@@ -1,5 +1,7 @@
 package com.team_coder.myapplication;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.team_coder.myapplication.database.StudentContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +60,44 @@ public class SecondActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    public static class StudentCursorAdapter extends CursorAdapter {
+
+        public StudentCursorAdapter(Context context, Cursor c) {
+            super(context, c, false);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            View convertView = LayoutInflater.from(parent.getContext())
+                    .inflate(android.R.layout.simple_list_item_2, parent, false);
+
+            TextView name = (TextView) convertView.findViewById(android.R.id.text1);
+            TextView number = (TextView) convertView.findViewById(android.R.id.text2);
+
+            ViewHolder holder = new ViewHolder();
+            holder.name = name;
+            holder.number = number;
+
+            convertView.setTag(holder);
+
+            return convertView;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            ViewHolder holder = (ViewHolder) view.getTag();
+
+            holder.name.setText(cursor.getString(
+                    cursor.getColumnIndexOrThrow(
+                            StudentContract.StudentEntry.COLUMN_NAME_NAME)));
+        }
+
+        static class ViewHolder {
+            TextView name;
+            TextView number;
+        }
     }
 
     public static class StudentAdapter extends BaseAdapter {

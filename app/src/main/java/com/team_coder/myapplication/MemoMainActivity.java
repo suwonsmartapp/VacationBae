@@ -17,15 +17,11 @@ import android.widget.Toast;
 import com.team_coder.myapplication.database.StudentContract;
 import com.team_coder.myapplication.database.StudentDbHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MemoMainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_NEW_MEMO = 1;
 
-    private List<Student> mData;
-    private SecondActivity.StudentAdapter mAdapter;
+    private SecondActivity.StudentCursorAdapter mAdapter;
     private StudentDbHelper mDbHelper;
 
     @Override
@@ -50,21 +46,7 @@ public class MemoMainActivity extends AppCompatActivity {
         Cursor cursor = mDbHelper.getStudents();
 
         // Data
-        mData = new ArrayList<>();
-        cursor.moveToFirst();
-        while (cursor.moveToNext()) {
-            String name = cursor.getString(
-                    cursor.getColumnIndexOrThrow(StudentContract.StudentEntry.COLUMN_NAME_NAME)
-            );
-            long itemId = cursor.getLong(
-                    cursor.getColumnIndexOrThrow(StudentContract.StudentEntry._ID)
-            );
-
-            mData.add(new Student(name, (int) itemId));
-        }
-
-        // Adapter
-        mAdapter = new SecondActivity.StudentAdapter(mData);
+        mAdapter = new SecondActivity.StudentCursorAdapter(this, cursor);
 
         ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(mAdapter);
@@ -72,10 +54,11 @@ public class MemoMainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Student student = (Student) parent.getAdapter().getItem(position);
+                Cursor cursor = (Cursor) parent.getAdapter().getItem(position);
+
                 Intent intent = new Intent(MemoMainActivity.this, MemoEditActivity.class);
-                intent.putExtra("name", student.getName());
-                intent.putExtra("position", position);
+                intent.putExtra("name", cursor.getString(cursor.getColumnIndexOrThrow(StudentContract.StudentEntry.COLUMN_NAME_NAME)));
+                intent.putExtra("id", id);
                 startActivityForResult(intent, REQUEST_CODE_NEW_MEMO);
             }
         });
@@ -97,8 +80,10 @@ public class MemoMainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_delete:
                 // 삭제
-                mData.remove(info.position);
-                mAdapter.notifyDataSetChanged();
+                if (mDbHelper.deleteStudent(info.id) != 0) {
+                    mAdapter.swapCursor(mDbHelper.getStudents());
+                }
+
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -113,14 +98,14 @@ public class MemoMainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // 데이터 추가
                 String addData = data.getStringExtra("name");
-                int position = data.getIntExtra("position", -1);
-                if (position == -1) {
+                long id = data.getLongExtra("id", -1);
+                if (id == -1) {
 
-                    // DB 작업
+                    // DB에 추가 작업
                     long newRowId = mDbHelper.insertStudent(addData);
 
-                    // 추가
-                    mData.add(new Student(addData, (int) newRowId));
+                    // 반영
+                    mAdapter.swapCursor(mDbHelper.getStudents());
 
                     if (newRowId == -1) {
                         Toast.makeText(MemoMainActivity.this, "에러", Toast.LENGTH_SHORT).show();
@@ -130,8 +115,11 @@ public class MemoMainActivity extends AppCompatActivity {
 
                 } else {
                     // 수정
-                    Student modify = mData.get(position);
-                    modify.setName(addData);
+                    int updated = mDbHelper.updateStudent(id, addData);
+
+                    if (updated != 0) {
+                        mAdapter.swapCursor(mDbHelper.getStudents());
+                    }
                 }
 
                 // 데이터 변경 됨을 어댑터에 알려주기
