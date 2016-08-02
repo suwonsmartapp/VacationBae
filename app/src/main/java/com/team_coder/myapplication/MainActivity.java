@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.memo_button).setOnClickListener(this);
         findViewById(R.id.call).setOnClickListener(this);
         findViewById(R.id.thread).setOnClickListener(this);
+        findViewById(R.id.contact).setOnClickListener(this);
 
         Log.d(TAG, "onCreate: ");
     }
@@ -94,27 +95,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.thread:
                 new LongWorkTask().execute();
-                // 오래 걸리는 일
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        // 백그라운드 쓰레드
-//                        try {
-//                            Log.d(TAG, "onClick: 오래 걸리는 일 시작");
-//                            Thread.sleep(3000);
-//                            Log.d(TAG, "onClick: 오래 걸리는 일 끝");
-//                            mTextView.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    mTextView.setText("끝났다");
-//                                }
-//                            });
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }).start();
-
+                break;
+            case R.id.contact:
+                startActivity(new Intent(this, ContactListActivity.class));
                 break;
         }
     }
