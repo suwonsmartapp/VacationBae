@@ -59,15 +59,16 @@
         android:text="intent 서비스 시작" />
 
     <Button
-        android:id="@+id/bind_service"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="bind 서비스" />
-
-    <Button
         android:id="@+id/control_bind_service"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="bind 서비스 조작" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="9" />
 
 </LinearLayout>

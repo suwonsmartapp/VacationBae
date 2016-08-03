@@ -30,6 +30,9 @@ public class MyService extends Service {
                         try {
                             Thread.sleep(1000);
                             Log.d(TAG, "onStartCommand: start " + i);
+                            if (mListener != null) {
+                                mListener.onCount(i);
+                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -63,6 +66,18 @@ public class MyService extends Service {
 
     public void control() {
         Log.d(TAG, "control: 잘 됩니다");
+    }
+
+
+    // 콜 백
+    private OnCountListener mListener;
+
+    public void setOnCountListener(OnCountListener listener) {
+        mListener = listener;
+    }
+
+    public interface OnCountListener {
+        void onCount(int count);
     }
 
 

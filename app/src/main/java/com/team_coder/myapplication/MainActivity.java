@@ -12,18 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.team_coder.myapplication.service.MyIntentService;
 import com.team_coder.myapplication.service.MyService;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyService.OnCountListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextView;
 
     private MyService mService;
     private boolean mBound;
+
+    private ProgressBar mProgress;
 
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             MyService.MyBinder binder = (MyService.MyBinder) service;
             mService = binder.getService();
+            mService.setOnCountListener(MainActivity.this);
             mBound = true;
         }
 
@@ -59,8 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.contact).setOnClickListener(this);
         findViewById(R.id.start_service).setOnClickListener(this);
         findViewById(R.id.intent_start_service).setOnClickListener(this);
-        findViewById(R.id.bind_service).setOnClickListener(this);
         findViewById(R.id.control_bind_service).setOnClickListener(this);
+
+        mProgress = (ProgressBar) findViewById(R.id.progressBar);
 
         Log.d(TAG, "onCreate: ");
     }
@@ -151,9 +156,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intentServiceIntent.setAction("start");
                 startService(intentServiceIntent);
                 break;
-            case R.id.bind_service:
-
-                break;
             case R.id.control_bind_service:
                 mService.control();
                 break;
@@ -166,6 +168,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onCount(int count) {
+        mProgress.setProgress(count);
     }
 
     private class LongWorkTask extends AsyncTask<Void, Void, Void> {
