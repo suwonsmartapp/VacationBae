@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.team_coder.myapplication.service.MyService;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.call).setOnClickListener(this);
         findViewById(R.id.thread).setOnClickListener(this);
         findViewById(R.id.contact).setOnClickListener(this);
+        findViewById(R.id.start_service).setOnClickListener(this);
+        findViewById(R.id.stop_service).setOnClickListener(this);
 
         Log.d(TAG, "onCreate: ");
     }
@@ -98,6 +102,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.contact:
                 startActivity(new Intent(this, ContactListActivity.class));
+                break;
+            case R.id.start_service:
+                Intent startIntent = new Intent(this, MyService.class);
+                startIntent.setAction("start");
+                startService(startIntent);
+                break;
+            case R.id.stop_service:
+                stopService(new Intent(this, MyService.class));
                 break;
         }
     }

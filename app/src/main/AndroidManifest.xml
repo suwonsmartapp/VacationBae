@@ -24,7 +24,12 @@
             android:label="@string/title_activity_memo_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MemoEditActivity" />
-        <activity android:name=".ContactListActivity"></activity>
+        <activity android:name=".ContactListActivity" />
+
+        <service
+            android:name=".service.MyService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
