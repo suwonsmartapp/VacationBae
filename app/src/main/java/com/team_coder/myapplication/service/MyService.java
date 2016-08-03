@@ -2,6 +2,7 @@ package com.team_coder.myapplication.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -46,9 +47,23 @@ public class MyService extends Service {
         Log.d(TAG, "onDestroy: ");
     }
 
+
+
+    public class MyBinder extends Binder {
+        public MyService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return MyService.this;
+        }
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return new MyBinder();
     }
+
+    public void control() {
+        Log.d(TAG, "control: 잘 됩니다");
+    }
+
+
 }

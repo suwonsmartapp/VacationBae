@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
     tools:context="com.team_coder.myapplication.MainActivity">
 
     <TextView
@@ -18,44 +18,56 @@
 
     <Button
         android:id="@+id/button"
-        android:text="button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="button" />
 
     <Button
-        android:text="메모장"
         android:id="@+id/memo_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="메모장" />
 
     <Button
         android:id="@+id/call"
-        android:text="010-4899-3729"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="010-4899-3729" />
 
     <Button
         android:id="@+id/thread"
-        android:text="쓰레드"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="쓰레드" />
 
     <Button
         android:id="@+id/contact"
-        android:text="연락처"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="연락처" />
 
     <Button
         android:id="@+id/start_service"
-        android:text="서비스 시작"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="기본 서비스 시작" />
 
     <Button
-        android:id="@+id/stop_service"
-        android:text="서비스 종료"
+        android:id="@+id/intent_start_service"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="intent 서비스 시작" />
+
+    <Button
+        android:id="@+id/bind_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="bind 서비스" />
+
+    <Button
+        android:id="@+id/control_bind_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="bind 서비스 조작" />
 
 </LinearLayout>

@@ -1,21 +1,47 @@
 package com.team_coder.myapplication;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.team_coder.myapplication.service.MyIntentService;
 import com.team_coder.myapplication.service.MyService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextView;
+
+    private MyService mService;
+    private boolean mBound;
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MyService.MyBinder binder = (MyService.MyBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +58,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.thread).setOnClickListener(this);
         findViewById(R.id.contact).setOnClickListener(this);
         findViewById(R.id.start_service).setOnClickListener(this);
-        findViewById(R.id.stop_service).setOnClickListener(this);
+        findViewById(R.id.intent_start_service).setOnClickListener(this);
+        findViewById(R.id.bind_service).setOnClickListener(this);
+        findViewById(R.id.control_bind_service).setOnClickListener(this);
 
         Log.d(TAG, "onCreate: ");
     }
@@ -58,6 +86,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: ");
+
+        // Bind to LocalService
+        Intent intent = new Intent(this, MyService.class);
+
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -75,6 +108,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStop() {
         super.onStop();
+        // Unbind from the service
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
     @Override
@@ -104,12 +142,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, ContactListActivity.class));
                 break;
             case R.id.start_service:
-                Intent startIntent = new Intent(this, MyService.class);
-                startIntent.setAction("start");
-                startService(startIntent);
+                Intent serviceBasicIntent = new Intent(this, MyService.class);
+                serviceBasicIntent.setAction("start");
+                startService(serviceBasicIntent);
                 break;
-            case R.id.stop_service:
-                stopService(new Intent(this, MyService.class));
+            case R.id.intent_start_service:
+                Intent intentServiceIntent = new Intent(this, MyIntentService.class);
+                intentServiceIntent.setAction("start");
+                startService(intentServiceIntent);
+                break;
+            case R.id.bind_service:
+
+                break;
+            case R.id.control_bind_service:
+                mService.control();
                 break;
         }
     }
