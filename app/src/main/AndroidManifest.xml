@@ -33,6 +33,16 @@
         <service
             android:name=".service.MyIntentService"
             android:exported="false" />
+
+        <!--<receiver-->
+            <!--android:name=".receiver.MyReceiver"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.BATTERY_LOW" />-->
+                <!--<action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
     </application>
 
 </manifest>

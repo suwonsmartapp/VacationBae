@@ -3,6 +3,7 @@ package com.team_coder.myapplication;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.team_coder.myapplication.receiver.MyReceiver;
 import com.team_coder.myapplication.service.MyIntentService;
 import com.team_coder.myapplication.service.MyService;
 
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mBound = false;
         }
     };
+    private MyReceiver mMyReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mProgress = (ProgressBar) findViewById(R.id.progressBar);
 
         Log.d(TAG, "onCreate: ");
+
+        mMyReceiver = new MyReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_BATTERY_LOW);
+        filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        registerReceiver(mMyReceiver, filter);
     }
 
     @Override
@@ -124,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
+
+        unregisterReceiver(mMyReceiver);
     }
 
     @Override
