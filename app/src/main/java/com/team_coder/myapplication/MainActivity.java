@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.team_coder.myapplication.receiver.MyReceiver;
 import com.team_coder.myapplication.service.MyIntentService;
 import com.team_coder.myapplication.service.MyService;
+import com.team_coder.myapplication.weather.WeatherActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyService.OnCountListener {
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.start_service).setOnClickListener(this);
         findViewById(R.id.intent_start_service).setOnClickListener(this);
         findViewById(R.id.control_bind_service).setOnClickListener(this);
+        findViewById(R.id.weather).setOnClickListener(this);
 
         mProgress = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -169,6 +171,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.control_bind_service:
                 mService.control();
+                break;
+            case R.id.weather:
+                startActivity(new Intent(this, WeatherActivity.class));
                 break;
         }
     }
