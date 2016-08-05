@@ -3,15 +3,14 @@ package com.team_coder.myapplication;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.AlphabetIndexer;
 import android.widget.ListView;
-import android.widget.SectionIndexer;
 
 public class ContactListActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -35,34 +34,40 @@ public class ContactListActivity extends AppCompatActivity
         ListView listView = (ListView) findViewById(R.id.list_view);
 
         // For the cursor adapter, specify which columns go into which views
-        String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
-        int[] toViews = {android.R.id.text1}; // The TextView in simple_list_item_1
+        String[] fromColumns = {CallLog.Calls.CACHED_NAME, CallLog.Calls.TYPE};
+        int[] toViews = {android.R.id.text1, android.R.id.text2}; // The TextView in simple_list_item_1
 
 //        // UI Thread
-        Cursor cursor = getContentResolver().query(ContactsContract.Data.CONTENT_URI,
-                null,
-                null,
-                null,
-                null);
+//        Cursor cursor = getContentResolver().query(
+//                ContactsContract.Data.CONTENT_URI,
+//                null,
+//                null,
+//                null,
+//                null);
 
         // Create an empty adapter we will use to display the loaded data.
         // We pass null for the cursor, then update it in onLoadFinished()
         mAdapter = new MyContactAdapter(this,
-                android.R.layout.simple_list_item_1, cursor,
+                android.R.layout.simple_list_item_2, null,
                 fromColumns, toViews, 0);
 
         listView.setAdapter(mAdapter);
 
 
         // Loader 동작
-//        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // background
-        return new CursorLoader(this, ContactsContract.Data.CONTENT_URI,
-                PROJECTION, SELECTION, null, null);
+        return new CursorLoader(
+                this,
+                CallLog.Calls.CONTENT_URI,
+                null,
+                CallLog.Calls.TYPE + "=1 AND " + CallLog.Calls.CACHED_NAME + "='마누라'",
+                null,
+                CallLog.Calls.DATE + " DESC");
     }
 
     @Override
@@ -76,32 +81,12 @@ public class ContactListActivity extends AppCompatActivity
         mAdapter.swapCursor(null);
     }
 
-    static class MyContactAdapter extends SimpleCursorAdapter implements SectionIndexer {
+    static class MyContactAdapter extends SimpleCursorAdapter {
 
-        AlphabetIndexer mAlphabetIndexer;
 
         public MyContactAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
             super(context, layout, c, from, to, flags);
 
-            mAlphabetIndexer = new AlphabetIndexer(c,
-                    c.getColumnIndexOrThrow(ContactsContract.Data.DISPLAY_NAME),
-                    " ABCDEFGHIJKLMNOPQRTSUVWXYZ");
-            mAlphabetIndexer.setCursor(c);
-        }
-
-        @Override
-        public Object[] getSections() {
-            return mAlphabetIndexer.getSections();
-        }
-
-        @Override
-        public int getPositionForSection(int sectionIndex) {
-            return mAlphabetIndexer.getPositionForSection(sectionIndex);
-        }
-
-        @Override
-        public int getSectionForPosition(int position) {
-            return mAlphabetIndexer.getSectionForPosition(position);
         }
 
 
